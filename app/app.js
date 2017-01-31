@@ -20,10 +20,10 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
           redirectTo: '/home'
         });
 
-        // $locationProvider.html5Mode({
-        //   enabled: true
-        // });
-        //
+        $locationProvider.html5Mode({
+          enabled: true
+        });
+
         // $locationProvider.hashPrefix('!');
     }
 ]);
