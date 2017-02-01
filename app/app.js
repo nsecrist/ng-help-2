@@ -20,15 +20,13 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
         redirectTo: '/home'
     });
 
-    // Use the HTML5 History API
-    $locationProvider.html5Mode(true);
+        $locationProvider.html5Mode({
+          enabled: true
+        });
 
-    // $locationProvider.html5Mode({
-    //   enabled: true
-    // });
-    //
-    // $locationProvider.hashPrefix('!');
-}]);
+        // $locationProvider.hashPrefix('!');
+    }
+]);
 
 ngHelpApp.run(function($rootScope, $location, $anchorScroll, $routeParams) {
     $rootScope.$on('$routeChangeSuccess', function(newRoute, oldRoute) {
