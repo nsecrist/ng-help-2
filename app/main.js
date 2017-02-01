@@ -97,8 +97,8 @@ function requestHandler(req, res) {
         root = __dirname,
         page404 = root + '/404.html',
         fullPath = "",
-        ignoredPaths = ['/partials'],
-        rewritePaths = ['/p'],
+        ignoredPaths = [],
+        rewritePaths = ['/p/'],
         REWRITTING = false;
 
     if (result = startsWith(req.url, ignoredPaths).found) {
@@ -108,7 +108,7 @@ function requestHandler(req, res) {
     if (result = startsWith(req.url, rewritePaths).found) {
         REWRITTING = true;
         console.log("!!ALERT!! Requested URL is Rewriteable! " + req.url);
-        if (rewritePaths[result.index] == '/p') {
+        if (rewritePaths[result.index] == '/p/') {
             // This regex checks for '/p/' and replaces it with '/sections/'
             // before moving onto "getFile()"
             //file.replace(/\/p\//g, "/sections/");
