@@ -4,7 +4,7 @@ const http = require('http')
 const fs = require('fs')
 const electron = require('electron')
 //const autoUpdater = require('./auto-updater')
-
+// const app = require('app');
 const BrowserWindow = electron.BrowserWindow
 const app = electron.app
 const baseURL = "http://localhost:9527/"
@@ -97,15 +97,15 @@ function requestHandler(req, res) {
         root = __dirname,
         page404 = root + '/404.html',
         fullPath = "",
-        ignoredPaths = [],
+        ignoredPaths = ['/bower_components/'],
         rewritePaths = ['/p/'],
         REWRITTING = false;
 
     if (result = startsWith(req.url, ignoredPaths).found) {
         console.log("!!ALERT!! Requested URL is Blacklisted!");
-        file = page404;
-    }
-    if (result = startsWith(req.url, rewritePaths).found) {
+        // file = page404;
+        fullPath = path.join(root, "..", file).replace(/\//g, "/");
+    } else if (result = startsWith(req.url, rewritePaths).found) {
         REWRITTING = true;
         console.log("!!ALERT!! Requested URL is Rewriteable! " + req.url);
         if (rewritePaths[result.index] == '/p/') {
@@ -113,6 +113,7 @@ function requestHandler(req, res) {
             // before moving onto "getFile()"
             //file.replace(/\/p\//g, "/sections/");
             console.log("Rewrite path = " + file);
+            fullPath = path.join(root, file).replace(/\//g, "/");
         }
         // Legacy code, not needed since we handle the / => /index.html above
         // else if (rewritePaths[result.index] == '/') {
@@ -121,14 +122,18 @@ function requestHandler(req, res) {
         // }
         else {
             console.log("Got a strange result from Request Handler: " + result.index);
+            file = page404;
+            fullPath = path.join(root, file).replace(/\//g, "/");
         }
+    } else {
+      fullPath = path.join(root, file).replace(/\//g, "/");
     }
 
     console.log("root = " + root);
     console.log("file = " + file);
 
     // Make full path to file and replace / with \
-    fullPath = path.join(root, file).replace(/\//g, "/");
+    // fullPath = path.join(root, file).replace(/\//g, "/");
     console.log("fullPath = " + fullPath);
 
 

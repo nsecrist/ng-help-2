@@ -7,3 +7,5 @@ tmp
 .idea
 app/assets/*
 app/sections/*
+*.log
+dist.prod/
