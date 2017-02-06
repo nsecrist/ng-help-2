@@ -104,7 +104,7 @@ function requestHandler(req, res) {
     if (result = startsWith(req.url, ignoredPaths).found) {
         console.log("!!ALERT!! Requested URL is Blacklisted!");
         // file = page404;
-        fullPath = path.join(root, "..", file).replace(/\//g, "/");
+        fullPath = path.join(root, file).replace(/\//g, "/");
     } else if (result = startsWith(req.url, rewritePaths).found) {
         REWRITTING = true;
         console.log("!!ALERT!! Requested URL is Rewriteable! " + req.url);

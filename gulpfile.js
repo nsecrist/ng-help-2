@@ -8,6 +8,7 @@ var Q = require('q');
 var asar = require('asar');
 var run = require('gulp-run-command');
 var shell = require('gulp-shell');
+var jetpack = require('fs-jetpack');
 
 // == PATH STRINGS ========
 
@@ -21,8 +22,14 @@ var paths = {
     distProd: './dist.prod',
     distScriptsProd: './dist.prod/scripts',
     scriptsDevServer: 'devServer/**/*.js',
-    app: './app/**/*'
+    app: './app/**/*',
+    bower_components: './bower_components',
+    prodBower: './app/bower_componets/**/*'
 };
+
+var projectDir = jetpack;
+var srcDir = jetpack.cwd('./src');
+var destDir = jetpack.cwd('./app');
 
 // == PIPE SEGMENTS ========
 
@@ -184,13 +191,33 @@ pipes.electronAsar = function() {
 
 // == TASKS ========
 
-// gulp.task('electron-asar', run('echo hello world'));
+gulp.task('copy-bower-components', ['clean-bower-components'],  function() {
+  projectDir.copy(paths.bower_components + '/html5-boilerplate/', destDir.path('./bower_components/html5-boilerplate/'));
+  projectDir.copy(paths.bower_components + '/angular/', destDir.path('./bower_components/angular/'));
+  projectDir.copy(paths.bower_components + '/bootstrap/', destDir.path('./bower_components/bootstrap/'));
+  projectDir.copy(paths.bower_components + '/jquery/', destDir.path('./bower_components/jquery/'));
+  projectDir.copy(paths.bower_components + '/angular-route/', destDir.path('./bower_components/angular-route/'));
+});
 
-gulp.task('electron-asar', shell.task([
+gulp.task('electron-start', ['electron-asar'], shell.task([
+  'electron ./dist.prod/app.asar/main.js'
+]));
+
+// Packs app into electron ASAR file
+// Depends on clean-prod which cleans the production directory before building
+gulp.task('electron-asar',['clean-prod'], shell.task([
   'echo I will now package your Electron in an ASAR file, one moment please.',
   'asar pack ./app ./dist.prod/app.asar',
   'echo Finished!'
-]))
+]));
+
+gulp.task('clean-bower-components', function() {
+  var deffered = Q.defer();
+  del('./app/bower_components/**/*', function() {
+    deffered.resolve();
+  });
+  return deffered.promise;
+});
 
 // removes all compiled dev files
 gulp.task('clean-dev', function() {
