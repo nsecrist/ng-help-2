@@ -52,6 +52,12 @@ angular.module('ngHelp.contents', [])
         };
     }])
 
+    .controller('SearchController', ['$scope', function($scope) {
+        $scope.search = function() {
+            console.log("Searching for: " + $scope.SearchString);
+        }
+    }])
+
     .directive('nghelpContents', function() {
         return {
             templateUrl: '/contents/contents.html',

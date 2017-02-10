@@ -51,5 +51,8 @@
     "postinstall": "bower install",
     "prestart": "npm install",
     "start": "electron ."
+  },
+  "dependencies": {
+    "elasticlunr": "^0.9.5"
   }
 }

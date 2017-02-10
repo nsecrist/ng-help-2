@@ -9,6 +9,8 @@ const BrowserWindow = electron.BrowserWindow
 const app = electron.app
 const baseURL = "http://localhost:9527/"
 
+var elasticlunr = require('elasticlunr');
+
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
     if (process.platform != 'darwin') {
@@ -20,12 +22,41 @@ app.on('window-all-closed', function() {
 // initialization and is ready to create browser windows.
 app.on('ready', function() {
 
+    // Let's create the Elasticlunr Index and set it equal to our index object
+    var index = createElasticlunrIndex();
+    console.log("Finished initializing Elasticlunr Index!");
+
     var args = process.argv
     var jsonPath = path.join(__dirname, "\\contents\\contents.json");
 
     fs.openSync(jsonPath, 'r+'); //throws error if file doesn't exist
     var data = fs.readFileSync(jsonPath); //file exists, get the contents
     var sections = JSON.parse(data);
+
+    var doc1 = {
+      "id": 1,
+      "title": "Oracle released its latest database Oracle 12g",
+      "body": "Yestaday Oracle has released its new database Oracle 12g, this would make more money for this company and lead to a nice profit report of annual year."
+    }
+
+    var doc2 = {
+      "id": 2,
+      "title": "Oracle released its profit report of 2015",
+      "body": "As expected, Oracle released its profit report of 2015, during the good sales of database and hardware, Oracle's profit of 2015 reached 12.5 Billion."
+    }
+
+    index.addDoc(doc1);
+    index.addDoc(doc2);
+
+    // for (i = 0; i < sections.length; i++) {
+    //   console.log("Adding " + sections[i].title + " to index...");
+    //   index.addDoc(sections[i].url);
+    // }
+    console.log("Finished adding documents to index!");
+
+    var results = index.search("Oracle");
+
+    console.log(results.toString());
 
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -79,6 +110,16 @@ app.on('ready', function() {
         mainWindow = null;
     });
 });
+
+function createElasticlunrIndex() {
+  console.log("Initializing ElasticLunr Index...");
+  return elasticlunr(function () {
+    this.addField('title');
+    this.addField('body');
+    this.setRef('id');
+    this.saveDocument(true);
+  });
+}
 
 /**
  * Let's try and explain some magic going on here.
