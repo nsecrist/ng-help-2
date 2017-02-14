@@ -9,3 +9,4 @@ app/assets/*
 app/sections/*
 *.log
 dist.prod/
+dist/
