@@ -1,0 +1,10 @@
+{
+  "name": "ng-help",
+  "private": true,
+  "version": "0.0.1",
+  "description": "A starter project for AngularJS",
+  "author": "Jacobs Technology Inc.",
+  "repository": "https://https://github.com/mplynch/ng-help",
+  "license": "MIT",
+  "main": "main.js"
+}

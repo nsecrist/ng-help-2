@@ -1,5 +1,4 @@
 const path = require('path')
-const glob = require('glob')
 const http = require('http')
 const fs = require('fs')
 const electron = require('electron')
