@@ -197,6 +197,7 @@ gulp.task('copy-bower-components', ['clean-bower-components'],  function() {
   projectDir.copy(paths.bower_components + '/bootstrap/', destDir.path('./bower_components/bootstrap/'));
   projectDir.copy(paths.bower_components + '/jquery/', destDir.path('./bower_components/jquery/'));
   projectDir.copy(paths.bower_components + '/angular-route/', destDir.path('./bower_components/angular-route/'));
+  projectDir.copy(paths.bower_components + '/elasticlunr/', destDir.path('./bower_components/elasticlunr/'));
 });
 
 gulp.task('electron-start', ['electron-asar'], shell.task([
@@ -205,7 +206,7 @@ gulp.task('electron-start', ['electron-asar'], shell.task([
 
 // Packs app into electron ASAR file
 // Depends on clean-prod which cleans the production directory before building
-gulp.task('electron-asar',['clean-prod'], shell.task([
+gulp.task('electron-asar',['clean-prod', 'copy-bower-components'], shell.task([
   'echo I will now package your Electron in an ASAR file, one moment please.',
   'asar pack ./app ./dist.prod/app.asar',
   'echo Finished!'

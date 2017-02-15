@@ -16,6 +16,10 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
         },
         controller: 'SectionController'
     }).
+    when('/search/', {
+      templateUrl: '/partials/search.html',
+      controller: 'SearchController'
+    }).
     otherwise({
         redirectTo: '/home'
     });

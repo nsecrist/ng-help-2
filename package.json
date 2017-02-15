@@ -58,5 +58,8 @@
   },
   "build": {
     "appId": "com.jacobs.technology.nghelp"
+  },
+  "dependencies": {
+    "elasticlunr": "^0.9.5"
   }
 }

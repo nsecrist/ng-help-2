@@ -28,9 +28,13 @@
         </button>
         <a class="navbar-brand" href="/index.html">ng-help</a>
       </div>
-      <div id="navbar" class="navbar-collapse collapse" ng-controller="SearchController">
+      <div id="navbar" class="navbar-collapse collapse">
         <form class="navbar-form navbar-right">
-          <input type="text" ng-model="SearchString" ng-change="search()" class="form-control" placeholder="Search...">
+          <div ng-controller="SearchController">
+            <!-- <input type="text" ng-model="SearchString" ng-change="search()" class="form-control" placeholder="Search..."> -->
+            <input type="text" ng-model="SearchString" class="form-control" placeholder="Search...">
+            <button type="button" ng-click="search()" class="btn btn-info">Go</button>
+          </div>
         </form>
       </div>
     </div>
@@ -46,7 +50,8 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
       <![endif]-->
 
-      <div ng-controller="SectionController" ng-view class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"></div>
+      <div ng-controller="SectionController" ng-view class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      </div>
     </div>
   </div>
 
@@ -56,6 +61,7 @@
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
   <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="../bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+  <script src="../bower_components/elasticlunr/release/elasticlunr.min.js"></script>
   <!-- endbuild -->
 
   <!-- build:app scripts/app.js -->

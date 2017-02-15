@@ -7,8 +7,7 @@ const electron = require('electron')
 const BrowserWindow = electron.BrowserWindow
 const app = electron.app
 const baseURL = "http://localhost:9527/"
-
-var elasticlunr = require('elasticlunr');
+const elasticlunr = require('./bower_components/elasticlunr/release/elasticlunr.min.js');
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
@@ -21,16 +20,14 @@ app.on('window-all-closed', function() {
 // initialization and is ready to create browser windows.
 app.on('ready', function() {
 
-    // Let's create the Elasticlunr Index and set it equal to our index object
-    var index = createElasticlunrIndex();
-    console.log("Finished initializing Elasticlunr Index!");
-
-    var args = process.argv
-    var jsonPath = path.join(__dirname, "\\contents\\contents.json");
-
-    fs.openSync(jsonPath, 'r+'); //throws error if file doesn't exist
-    var data = fs.readFileSync(jsonPath); //file exists, get the contents
-    var sections = JSON.parse(data);
+    // Playing around with some elastic search stuff in angular.
+    // For this app, the JSON docs to search will be packaged, so we can add them
+    // to the index once the app starts up and then use that index to search against
+    var index = elasticlunr(function() {
+      this.addField('title');
+      this.addField('body');
+      this.setRef('id');
+    });
 
     var doc1 = {
       "id": 1,
@@ -47,15 +44,18 @@ app.on('ready', function() {
     index.addDoc(doc1);
     index.addDoc(doc2);
 
-    // for (i = 0; i < sections.length; i++) {
-    //   console.log("Adding " + sections[i].title + " to index...");
-    //   index.addDoc(sections[i].url);
-    // }
-    console.log("Finished adding documents to index!");
+    // The actual search happpening
+    var result = index.search("Oracle database");
+    // Our result is a JSON object with a refId and a score
+    console.log(result);
+    console.log(index);
 
-    var results = index.search("Oracle");
+    var args = process.argv
+    var jsonPath = path.join(__dirname, "\\contents\\contents.json");
 
-    console.log(results.toString());
+    fs.openSync(jsonPath, 'r+'); //throws error if file doesn't exist
+    var data = fs.readFileSync(jsonPath); //file exists, get the contents
+    var sections = JSON.parse(data);
 
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -110,16 +110,6 @@ app.on('ready', function() {
     });
 });
 
-function createElasticlunrIndex() {
-  console.log("Initializing ElasticLunr Index...");
-  return elasticlunr(function () {
-    this.addField('title');
-    this.addField('body');
-    this.setRef('id');
-    this.saveDocument(true);
-  });
-}
-
 /**
  * Let's try and explain some magic going on here.
  * So, we need to ignore requests to all "whitelisted" files on the server
@@ -165,6 +155,11 @@ function requestHandler(req, res) {
             file = page404;
             fullPath = path.join(root, file).replace(/\//g, "/");
         }
+    } else if (result = startsWith(req.url, ['/search/']).found) {
+      console.log("This is a search request, handle me.");
+      file = root + '/partials/search.html';
+      fullPath = path.join(root, file).replace(/\//g, "/");
+
     } else {
       fullPath = path.join(root, file).replace(/\//g, "/");
     }
@@ -191,6 +186,7 @@ function requestHandler(req, res) {
 
 };
 
+// Checks to see if the URL passed starts with any of the items in provided array
 function startsWith(string, array) {
     console.log("Starts with entered... " + string);
     for (i = 0; i < array.length; i++)
