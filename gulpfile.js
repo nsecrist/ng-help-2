@@ -9,6 +9,7 @@ var asar = require('asar');
 var run = require('gulp-run-command');
 var shell = require('gulp-shell');
 var jetpack = require('fs-jetpack');
+var toJson = require('gulp-to-json');
 
 // == PATH STRINGS ========
 
@@ -24,7 +25,8 @@ var paths = {
     scriptsDevServer: 'devServer/**/*.js',
     app: './app/**/*',
     bower_components: './bower_components',
-    prodBower: './app/bower_componets/**/*'
+    prodBower: './app/bower_componets/**/*',
+    sectionHTML: './app/sections/'
 };
 
 var projectDir = jetpack;
@@ -189,7 +191,56 @@ pipes.electronAsar = function() {
   return run("asar pack " + paths.app + " " + paths.distProd + "/app.asar");
 };
 
+pipes.convertedJson = function() {
+  return gulp.src(paths.sectionHTML)
+    .pipe(toJson());
+};
+
 // == TASKS ========
+
+gulp.task('produce-sections-json', function() {
+  var sections = jetpack.list(paths.sectionHTML);
+  // var jsonString = "";
+  var json = [];
+
+  console.log("number of files found: " + sections.length);
+
+  for (var i = 0; i < sections.length; i++) {
+    var titles = sections[i].split(".");
+    var pTitle = titles[0];
+    json.push({
+      url: "p/" + sections[i],
+      title: pTitle
+    });
+  }
+
+  // for (var i = 0; i < sections.length; i++) {
+  //   var titles = sections[i].split(".");
+  //   var title = titles[0];
+  //   if (i === sections.length - 1) {
+  //     // Last element of sections we need to end the JSON file here
+  //     console.log(title);
+  //     jsonString.concat("{\"url\": \"p/" + sections[i] + "\", \"title\": \"" + title + "\"}\r\n]");
+  //     console.log("Progress: " + jsonString);
+  //   } else if (i === 0) {
+  //     // First element of sections so start JSON file html5-boilerplate
+  //     console.log(title);
+  //     jsonString.concat("[\r\n{\"url\": \"p/" + sections[i] + "\", \"title\": \"" + title + "\"}\r\n");
+  //     console.log("Progress: " + jsonString);
+  //   } else {
+  //     // Any other element we just need to add a new record in the JSON file
+  //     console.log(title);
+  //     jsonString.concat("{\"url\": \"p/" + sections[i] + "\", \"title\": \"" + title + "\"},\r\n");
+  //     console.log("Progress: " + jsonString);
+  //   }
+  // }
+
+  // console.log(jsonString);
+  jetpack.write('./app/contents/contents.json', json);
+
+});
+
+gulp.task('to-json', pipes.convertedJson);
 
 gulp.task('copy-bower-components', ['clean-bower-components'],  function() {
   projectDir.copy(paths.bower_components + '/html5-boilerplate/', destDir.path('./bower_components/html5-boilerplate/'));
@@ -206,7 +257,7 @@ gulp.task('electron-start', ['electron-asar'], shell.task([
 
 // Packs app into electron ASAR file
 // Depends on clean-prod which cleans the production directory before building
-gulp.task('electron-asar',['clean-prod', 'copy-bower-components'], shell.task([
+gulp.task('electron-asar',['clean-prod', 'copy-bower-components', 'produce-sections-json'], shell.task([
   'echo I will now package your Electron in an ASAR file, one moment please.',
   'asar pack ./app ./dist.prod/app.asar',
   'echo Finished!'

@@ -16,7 +16,7 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
         },
         controller: 'SectionController'
     }).
-    when('/search/', {
+    when('/search?:searchString*', {
       templateUrl: '/partials/search.html',
       controller: 'SearchController'
     }).

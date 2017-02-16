@@ -69,7 +69,7 @@ angular.module('ngHelp.contents', [])
         $scope.search = function() {
             console.log("Searching for: " + $scope.SearchString);
             SearchString.setSearchString($scope.SearchString);
-            $location.url("/search/");
+            $location.url("/search?");
         };
         $scope.getSearchString = function() {
           return SearchString.getSearchString();

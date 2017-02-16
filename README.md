@@ -20,10 +20,18 @@ This command will install all the required dependencies for Node.js and obtain t
 
 ## Build a Distributable Asar File
 
-The following command will build a distributable asar file and then launch electron from it.
+The following command will build a distributable asar file and then launch electron from it. This also handles creating the contents.json file for us.
 
 ```
 gulp electron-asar
+```
+
+## Produce Contents JSON File
+
+The following command can be run to produce a contents.json file from the items in the sections directory. This is a dumb process at the moment and expects that only .html files are present in the sections folder and that you want all files in that folder to have their own link in the sections bar.
+
+```
+gulp produce-sections-json
 ```
 
 ## Command Line Arguments
