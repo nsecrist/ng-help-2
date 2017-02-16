@@ -10,3 +10,4 @@ app/sections/*
 *.log
 dist.prod/
 dist/
+app/contents/contents.json
