@@ -30,18 +30,18 @@ angular.module('ngHelp.contents', [])
         return service;
     })
 
-    .service('SearchString', function() {
-      var searchString = '';
-
-      return {
-        getSearchString: function() {
-          return searchString;
-        },
-        setSearchString: function(value) {
-          searchString = value;
-        }
-      };
-    })
+    // .service('SearchString', function() {
+    //   var searchString = '';
+    //
+    //   return {
+    //     getSearchString: function() {
+    //       return searchString;
+    //     },
+    //     setSearchString: function(value) {
+    //       searchString = value;
+    //     }
+    //   };
+    // })
 
     .controller('ContentsController', ['$scope', 'ContentsService', function($scope, ContentsService) {
         $scope.contents = ContentsService.fetch().then(function(contents) {
@@ -65,16 +65,16 @@ angular.module('ngHelp.contents', [])
         };
     }])
 
-    .controller('SearchController', ['$scope', '$location', 'SearchString', function($scope, $location, SearchString) {
-        $scope.search = function() {
-            console.log("Searching for: " + $scope.SearchString);
-            SearchString.setSearchString($scope.SearchString);
-            $location.url("/search?");
-        };
-        $scope.getSearchString = function() {
-          return SearchString.getSearchString();
-        };
-    }])
+    // .controller('SearchController', ['$scope', '$location', 'SearchString', function($scope, $location, SearchString) {
+    //     $scope.search = function() {
+    //         console.log("Searching for: " + $scope.SearchString);
+    //         SearchString.setSearchString($scope.SearchString);
+    //         $location.url("/search?");
+    //     };
+    //     $scope.getSearchString = function() {
+    //       return SearchString.getSearchString();
+    //     };
+    // }])
 
     .directive('nghelpContents', function() {
         return {

@@ -24,7 +24,7 @@ __sections\__ should contain all of your html partials that you want links to in
 Once you have the above folder structure, run the following to have your __contents.json__ produced for you.
 
 ```
-gulp produce-sections-json
+gulp produce-contents-json
 ```
 
 To hit the ground running run the following command from the root directory of this project.
@@ -40,6 +40,11 @@ This command will install all the required dependencies for Node.js and obtain t
 The following command will build a distributable asar file and then launch electron from it. This also handles creating the contents.json file for us.
 
 ```
+gulp electron-start
+```
+
+If you prefer to just produce an ASAR file, run the gulp task below:
+```
 gulp electron-asar
 ```
 
@@ -48,7 +53,7 @@ gulp electron-asar
 The following command can be run to produce a contents.json file from the items in the sections directory. This is a dumb process at the moment and expects that only .html files are present in the sections folder and that you want all files in that folder to have their own link in the sections bar.
 
 ```
-gulp produce-sections-json
+gulp produce-contents-json
 ```
 
 ## Command Line Arguments
@@ -63,7 +68,9 @@ The Electron application will allow you to launch it and specify the title of a 
 electron <app.asar path>/main.js -section "<Title of Section>"
 ```
 
-## Linking One HTML Section to Another
+## HTML Document Writing Guide
+
+### Linking One HTML Section to Another
 
 You may want to include links from one HTML file to another within the HTML itself. This can be done by utilizing the __GoToSection()__ function provided by the SectionController.
 

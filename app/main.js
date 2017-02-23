@@ -9,6 +9,19 @@ const app = electron.app
 const baseURL = "http://localhost:9527/"
 const elasticlunr = require('./bower_components/elasticlunr/release/elasticlunr.min.js');
 
+// Playing around with some elastic search stuff in angular.
+// For this app, the JSON docs to search will be packaged, so we can add them
+// to the index once the app starts up and then use that index to search against
+const index = elasticlunr(function() {
+    this.addField('title');
+    this.addField('body');
+    this.addField('description');
+    this.addField('url');
+    this.setRef('id');
+    this.documentStore = new elasticlunr.DocumentStore;
+    this.saveDocument(true);
+});
+
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
     if (process.platform != 'darwin') {
@@ -20,35 +33,7 @@ app.on('window-all-closed', function() {
 // initialization and is ready to create browser windows.
 app.on('ready', function() {
 
-    // Playing around with some elastic search stuff in angular.
-    // For this app, the JSON docs to search will be packaged, so we can add them
-    // to the index once the app starts up and then use that index to search against
-    var index = elasticlunr(function() {
-      this.addField('title');
-      this.addField('body');
-      this.setRef('id');
-    });
-
-    var doc1 = {
-      "id": 1,
-      "title": "Oracle released its latest database Oracle 12g",
-      "body": "Yestaday Oracle has released its new database Oracle 12g, this would make more money for this company and lead to a nice profit report of annual year."
-    }
-
-    var doc2 = {
-      "id": 2,
-      "title": "Oracle released its profit report of 2015",
-      "body": "As expected, Oracle released its profit report of 2015, during the good sales of database and hardware, Oracle's profit of 2015 reached 12.5 Billion."
-    }
-
-    index.addDoc(doc1);
-    index.addDoc(doc2);
-
-    // The actual search happpening
-    var result = index.search("Oracle database");
-    // Our result is a JSON object with a refId and a score
-    console.log(result);
-    console.log(index);
+    buildSearchIndex();
 
     var args = process.argv
     var jsonPath = path.join(__dirname, "\\contents\\contents.json");
@@ -110,6 +95,38 @@ app.on('ready', function() {
     });
 });
 
+function buildSearchIndex() {
+  var jsonPath = "./app/search/search.json"
+  fs.openSync(jsonPath, 'r+'); //throws error if file doesn't exist
+  var data = fs.readFileSync(jsonPath);
+  var documents = JSON.parse(data);
+
+  documents.forEach(function(doc) {
+    console.log(doc);
+    index.addDoc(doc);
+  });
+
+    // var doc1 = {
+    //     "id": 1,
+    //     "title": "Oracle released its latest database Oracle 12g",
+    //     "body": "Yestaday Oracle has released its new database Oracle 12g, this would make more money for this company and lead to a nice profit report of annual year.",
+    //     "description": "Yestaday Oracle has released its new database Oracle 12g",
+    //     "url": "/index.html"
+    // }
+    //
+    // var doc2 = {
+    //     "id": 2,
+    //     "title": "Oracle released its profit report of 2015",
+    //     "body": "As expected, Oracle released its profit report of 2015, during the good sales of database and hardware, Oracle's profit of 2015 reached 12.5 Billion.",
+    //     "description": "As expected, Oracle released its profit report of 2015,",
+    //     "url": "/index.html"
+    // }
+    //
+    // index.addDoc(doc1);
+    // index.addDoc(doc2);
+
+}
+
 /**
  * Let's try and explain some magic going on here.
  * So, we need to ignore requests to all "whitelisted" files on the server
@@ -155,13 +172,30 @@ function requestHandler(req, res) {
             file = page404;
             fullPath = path.join(root, file).replace(/\//g, "/");
         }
-    } else if (result = startsWith(req.url, ['/search/']).found) {
-      console.log("This is a search request, handle me.");
-      file = root + '/partials/search.html';
-      fullPath = path.join(root, file).replace(/\//g, "/");
+    } else if (result = startsWith(req.url, ['/search/results.html']).found) {
+        console.log("This is a results request, handle me.");
+        file = '/search/results.html';
+        fullPath = path.join(root, file).replace(/\//g, "/");
+    } else if (result = startsWith(req.url, ['/find/']).found) {
+        console.log("This is a search request, handle me.");
+        console.log("Request Type:" + req.method);
 
+        if (req.method === 'POST') {
+            console.log("We got a POST!");
+            var searchTerm = getParameterByName("v", req.url);
+            console.log("Search Term: " + searchTerm);
+            var result = index.search(searchTerm);
+            console.log("Search Result:" + JSON.stringify(result));
+            var docs = retreiveResultDocs(result);
+            res.end(JSON.stringify(docs));
+        } else if (req.method === 'GET') {
+            console.log("We got a GET! Since this is a find, it should have been a POST, who screwed up?");
+        }
+        // res.end("{'id': 1, 'url': 'one.html', 'title': 'One', 'description': 'A page about one'}");
+        // TODO: Perform search
+        // TODO: Call res.end() with JSON data returned from search
     } else {
-      fullPath = path.join(root, file).replace(/\//g, "/");
+        fullPath = path.join(root, file).replace(/\//g, "/");
     }
 
     console.log("root = " + root);
@@ -184,6 +218,19 @@ function requestHandler(req, res) {
         });
     }
 
+};
+
+function retreiveResultDocs(results) {
+  // TODO: For each result in results, retreive JSON DOC object and prepare to return
+  // to the client.
+
+  var docs = [];
+  for (var i = 0; i < results.length; i++) {
+    var cRef = parseInt(results[i].ref);
+    docs.push(index.documentStore.getDoc(cRef));
+  }
+
+  return docs;
 };
 
 // Checks to see if the URL passed starts with any of the items in provided array
@@ -230,3 +277,17 @@ function getFile(filePath, res, page404) {
         }
     });
 };
+
+
+// Decodes a URL and retrieves the specified parameter value.
+function getParameterByName(name, url) {
+    if (!url) {
+      console.log("No URL specified in getParameterByName().")
+    }
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}

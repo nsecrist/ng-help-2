@@ -9,7 +9,9 @@ var asar = require('asar');
 var run = require('gulp-run-command');
 var shell = require('gulp-shell');
 var jetpack = require('fs-jetpack');
-var toJson = require('gulp-to-json');
+var jquery = require('jquery');
+var jsdom = require('jsdom').jsdom;
+var serializeDocument = require('jsdom').serializeDocument;
 
 // == PATH STRINGS ========
 
@@ -191,16 +193,46 @@ pipes.electronAsar = function() {
   return run("asar pack " + paths.app + " " + paths.distProd + "/app.asar");
 };
 
-pipes.convertedJson = function() {
-  return gulp.src(paths.sectionHTML)
-    .pipe(toJson());
-};
-
 // == TASKS ========
 
-gulp.task('produce-sections-json', function() {
+gulp.task('build-search-json', function() {
+  var searchJSON = [];
   var sections = jetpack.list(paths.sectionHTML);
-  // var jsonString = "";
+  console.log("number of files found: " + sections.length);
+
+  sections.forEach(function(section, index) {
+    console.log("Path to HTML: " + paths.sectionHTML + section);
+    var doc = jsdom(jetpack.read(paths.sectionHTML + section));
+
+    // serializeDocument(doc);
+    console.log('Pushing element ' + index + ', ' + doc.title + ' to JSON array.');
+    try {
+      searchJSON.push({
+        id: index,
+        title: doc.title,
+        body: doc.body.innerHTML,
+        description: doc.getElementById('purpose-body').innerHTML,
+        url: "p/" + section
+      });
+    } catch (err) {
+      console.log(doc.title + " is missing a purpose-body tagged paragraph.");
+      searchJSON.push({
+        id: index,
+        title: doc.title,
+        body: doc.body.innerHTML,
+        description: "This document does not have a purpose-body defined!",
+        url: "p/" + section
+      });
+    }
+    //console.log('Body: ' + doc.body);
+    // console.log(doc.documentElement.body);
+  })
+
+  jetpack.write('./app/search/search.json', searchJSON);
+});
+
+gulp.task('produce-contents-json', function() {
+  var sections = jetpack.list(paths.sectionHTML);
   var json = [];
 
   console.log("number of files found: " + sections.length);
@@ -214,33 +246,11 @@ gulp.task('produce-sections-json', function() {
     });
   }
 
-  // for (var i = 0; i < sections.length; i++) {
-  //   var titles = sections[i].split(".");
-  //   var title = titles[0];
-  //   if (i === sections.length - 1) {
-  //     // Last element of sections we need to end the JSON file here
-  //     console.log(title);
-  //     jsonString.concat("{\"url\": \"p/" + sections[i] + "\", \"title\": \"" + title + "\"}\r\n]");
-  //     console.log("Progress: " + jsonString);
-  //   } else if (i === 0) {
-  //     // First element of sections so start JSON file html5-boilerplate
-  //     console.log(title);
-  //     jsonString.concat("[\r\n{\"url\": \"p/" + sections[i] + "\", \"title\": \"" + title + "\"}\r\n");
-  //     console.log("Progress: " + jsonString);
-  //   } else {
-  //     // Any other element we just need to add a new record in the JSON file
-  //     console.log(title);
-  //     jsonString.concat("{\"url\": \"p/" + sections[i] + "\", \"title\": \"" + title + "\"},\r\n");
-  //     console.log("Progress: " + jsonString);
-  //   }
-  // }
-
-  // console.log(jsonString);
+  // Jetpack will automatically write an array out in JSON format.
+  // So here we have our json array full of the objects we want the file to contain
   jetpack.write('./app/contents/contents.json', json);
 
 });
-
-gulp.task('to-json', pipes.convertedJson);
 
 gulp.task('copy-bower-components', ['clean-bower-components'],  function() {
   projectDir.copy(paths.bower_components + '/html5-boilerplate/', destDir.path('./bower_components/html5-boilerplate/'));
@@ -257,7 +267,7 @@ gulp.task('electron-start', ['electron-asar'], shell.task([
 
 // Packs app into electron ASAR file
 // Depends on clean-prod which cleans the production directory before building
-gulp.task('electron-asar',['clean-prod', 'copy-bower-components', 'produce-sections-json'], shell.task([
+gulp.task('electron-asar',['clean-prod', 'copy-bower-components', 'produce-contents-json', 'build-search-json'], shell.task([
   'echo I will now package your Electron in an ASAR file, one moment please.',
   'asar pack ./app ./dist.prod/app.asar',
   'echo Finished!'

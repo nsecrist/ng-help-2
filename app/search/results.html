@@ -1,0 +1,10 @@
+<!-- <div ng-controller="ResultsController" class="col-md-6"> -->
+<div class="col-md-6">
+  <h2>Search results for: {{searchTerm}}</h2>
+  <div class="panel panel-default" ng-repeat="result in results">
+    <div class="panel-heading">
+      <a href="{{result.url}}">{{result.title}}</a>
+    </div>
+    <div class="panel-body">{{result.description}}</div>
+  </div>
+</div>
