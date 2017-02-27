@@ -65,6 +65,13 @@ angular.module('ngHelp.search', [])
         $location.path('/search');
       }
     };
+
+    $scope.alertSearch = function($event) {
+      if ($event.which === 13) {
+        console.log("Enter key pressed.")
+        $location.path('/search');
+      }
+    };
   }])
 
   .controller('ResultsController', ['$scope', 'SearchService', function($scope, SearchService) {

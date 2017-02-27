@@ -34,7 +34,7 @@
             <span class="input-group-addon">
               <i class="glyphicon glyphicon-search"></i>
             </span>
-            <input type="text" class="form-control" placeholder="Search..." ng-model-options="{ debounce: 500 }" ng-model="searchTerm" ng-change="updateSearchTerm()">
+            <input type="text" class="form-control" placeholder="Search..." ng-model-options="{ debounce: 500 }" ng-model="searchTerm" ng-change="updateSearchTerm()" ng-keypress="alertSearch($event)">
           </div>
         </form>
       </div>
