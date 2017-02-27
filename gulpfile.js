@@ -195,6 +195,9 @@ pipes.electronAsar = function() {
 
 // == TASKS ========
 
+// builds the search.json file from the HTML documents provided in the /sections
+// folder. This is required for the applicaiton to be able to generate an index
+// and ultimately make the search functionality work.
 gulp.task('build-search-json', function() {
   var searchJSON = [];
   var sections = jetpack.list(paths.sectionHTML);
@@ -204,6 +207,29 @@ gulp.task('build-search-json', function() {
     console.log("Path to HTML: " + paths.sectionHTML + section);
     var doc = jsdom(jetpack.read(paths.sectionHTML + section));
 
+    var description = "";
+    var metas = doc.getElementsByTagName('meta');
+    var foundDesc = false;
+
+    if (metas.length >= 1) {
+      for (var i=0; i < metas.length; i++) {
+        if (metas[i].getAttribute("name") === "description") {
+          description = metas[i].getAttribute("content");
+          foundDesc = true;
+          break;
+        }
+      }
+    }
+
+    if (!foundDesc) {
+      try {
+        description = doc.getElementById('purpose-body').innerHTML;
+      }
+      catch (err) {
+        description = "A page description was not provided. Please see the ng-help README for help in defining a search description.";
+      }
+    }
+
     // serializeDocument(doc);
     console.log('Pushing element ' + index + ', ' + doc.title + ' to JSON array.');
     try {
@@ -211,7 +237,7 @@ gulp.task('build-search-json', function() {
         id: index,
         title: doc.title,
         body: doc.body.innerHTML,
-        description: doc.getElementById('purpose-body').innerHTML,
+        description: description,
         url: "p/" + section
       });
     } catch (err) {
@@ -220,7 +246,7 @@ gulp.task('build-search-json', function() {
         id: index,
         title: doc.title,
         body: doc.body.innerHTML,
-        description: "This document does not have a purpose-body defined!",
+        description: description,
         url: "p/" + section
       });
     }
@@ -231,6 +257,9 @@ gulp.task('build-search-json', function() {
   jetpack.write('./app/search/search.json', searchJSON);
 });
 
+// Produces the contents.json file that is required for producing the navigation
+// side bar within the ng-app. This is built from the .html files provided within
+// the /sections directory
 gulp.task('produce-contents-json', function() {
   var sections = jetpack.list(paths.sectionHTML);
   var json = [];

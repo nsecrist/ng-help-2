@@ -63,6 +63,7 @@
     "appId": "com.jacobs.technology.nghelp"
   },
   "dependencies": {
-    "elasticlunr": "^0.9.5"
+    "elasticlunr": "^0.9.5",
+    "electron-localshortcut": "^1.0.0"
   }
 }

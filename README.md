@@ -84,3 +84,11 @@ In Foo.html:
 ```
 
 If you do not include the href property, the mouse cursor will not behave as users expect it to when it hovers over a link. The __GoToSection()__ function accepts a string that matches the __EXACT__ title of the section you want to link to.
+
+### Providing Search Descriptions
+
+In order to set the text that is displayed by the search functionality within ng-Help, you must provide a <meta> tag in the head of each of your section html files. This tag must be named description and then may contain around 160 characters (recommended).
+
+```
+<meta name="description" content="Here is some content that will displayed along with the page title as part of the search results within ng-help">
+```

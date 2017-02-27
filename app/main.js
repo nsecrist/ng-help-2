@@ -8,6 +8,7 @@ const BrowserWindow = electron.BrowserWindow
 const app = electron.app
 const baseURL = "http://localhost:9527/"
 const elasticlunr = require('./bower_components/elasticlunr/release/elasticlunr.min.js');
+const electronLocalShortcut = require('electron-localshortcut');
 
 // Playing around with some elastic search stuff in angular.
 // For this app, the JSON docs to search will be packaged, so we can add them
@@ -21,6 +22,37 @@ const index = elasticlunr(function() {
     this.documentStore = new elasticlunr.DocumentStore;
     this.saveDocument(true);
 });
+
+// Making this electron application a single instance app
+// When another app starts up, whiel this is running, it will instead call this callback function
+// and bring the other app to the foreground and hangle the commandline arguments passed to it
+const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
+  if(BrowserWindow) {
+    var jsonPath = path.join(__dirname, "\\contents\\contents.json");
+
+    fs.openSync(jsonPath, 'r+'); //throws error if file doesn't exist
+    var data = fs.readFileSync(jsonPath); //file exists, get the contents
+    var sections = JSON.parse(data);
+
+    // Check for an argument
+    cmdArg = checkForArg(commandLine);
+
+    // and load the index.html of the app.
+    // Launch the requested page or the index
+    launchRequestedPage(cmdArg, sections);
+
+    // If the help app is minimized, restore it
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore();
+    }
+
+    mainWindow.focus();
+  }
+});
+
+if (shouldQuit) {
+  app.quit();
+};
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
@@ -59,29 +91,12 @@ app.on('ready', function() {
     var server = http.createServer(requestHandler).listen(9527);
     var cmdArg = "";
 
-    for (i = 0; i < args.length; i++) {
-        console.log("Arg" + i + ": " + args[i]);
-        if (args[i] === "-section") {
-            cmdArg = args[i + 1];
-            console.log("Found section arg! == " + args[i + 1]);
-            break;
-        }
-    }
+    // Check for an argument
+    cmdArg = checkForArg(args);
+
     // and load the index.html of the app.
-    if (cmdArg === "") {
-        mainWindow.loadURL('http://localhost:9527/index.html');
-    } else {
-        for (i = 0; i < sections.length; i++) {
-            if (sections[i].title === cmdArg) {
-                mainWindow.loadURL(path.join(baseURL, sections[i].url));
-                break;
-            }
-        }
-        // console.log("Received a command line arg: " + cmdArg);
-        // console.log("!!! Still loading index.html for now...");
-        // mainWindow.loadURL('http://localhost:9527/index.html');
-    }
-    // mainWindow.loadURL('file://' + __dirname + '/index.html');
+    // Launch the requested page or the index
+    launchRequestedPage(cmdArg, sections);
 
     mainWindow.openDevTools();
 
@@ -94,6 +109,31 @@ app.on('ready', function() {
         mainWindow = null;
     });
 });
+
+// Launch the requested page or the index
+function launchRequestedPage(cmdArg, sections) {
+  if (cmdArg === "") {
+      mainWindow.loadURL('http://localhost:9527/index.html');
+  } else {
+      for (i = 0; i < sections.length; i++) {
+          if (sections[i].title === cmdArg) {
+              mainWindow.loadURL(path.join(baseURL, sections[i].url));
+              break;
+          }
+      }
+  }
+}
+
+// Check for an argument
+function checkForArg (args) {
+  for (i = 0; i < args.length; i++) {
+      console.log("Arg" + i + ": " + args[i]);
+      if (args[i] === "-section") {
+          console.log("Found section arg! == " + args[i + 1]);
+          return args[i + 1];
+      }
+  }
+}
 
 function buildSearchIndex() {
   var jsonPath = "./app/search/search.json"
@@ -150,23 +190,14 @@ function requestHandler(req, res) {
 
     if (result = startsWith(req.url, ignoredPaths).found) {
         console.log("!!ALERT!! Requested URL is Blacklisted!");
-        // file = page404;
         fullPath = path.join(root, file).replace(/\//g, "/");
     } else if (result = startsWith(req.url, rewritePaths).found) {
         REWRITTING = true;
         console.log("!!ALERT!! Requested URL is Rewriteable! " + req.url);
         if (rewritePaths[result.index] == '/p/') {
-            // This regex checks for '/p/' and replaces it with '/sections/'
-            // before moving onto "getFile()"
-            //file.replace(/\/p\//g, "/sections/");
             console.log("Rewrite path = " + file);
             fullPath = path.join(root, file).replace(/\//g, "/");
         }
-        // Legacy code, not needed since we handle the / => /index.html above
-        // else if (rewritePaths[result.index] == '/') {
-        //   file.replace(/\//g, "/index.html");
-        //   console.log("Rewrite path = " + file);
-        // }
         else {
             console.log("Got a strange result from Request Handler: " + result.index);
             file = page404;
@@ -191,9 +222,6 @@ function requestHandler(req, res) {
         } else if (req.method === 'GET') {
             console.log("We got a GET! Since this is a find, it should have been a POST, who screwed up?");
         }
-        // res.end("{'id': 1, 'url': 'one.html', 'title': 'One', 'description': 'A page about one'}");
-        // TODO: Perform search
-        // TODO: Call res.end() with JSON data returned from search
     } else {
         fullPath = path.join(root, file).replace(/\//g, "/");
     }
