@@ -3,7 +3,8 @@
 // Declare app level module which depends on views, and components
 var ngHelpApp = angular.module('ngHelp', [
     'ngRoute',
-    'ngHelp.contents'
+    'ngHelp.contents',
+    'ngHelp.search'
 ]).
 
 config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
@@ -15,6 +16,11 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
             return '/sections/' + urlattr.name;
         },
         controller: 'SectionController'
+    }).
+    when('/search', {
+      templateUrl: '/search/results.html',
+      // TO
+      controller: 'ResultsController'
     }).
     otherwise({
         redirectTo: '/home'

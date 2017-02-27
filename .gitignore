@@ -7,3 +7,8 @@ tmp
 .idea
 app/assets/*
 app/sections/*
+*.log
+dist.prod/
+dist/
+app/contents/contents.json
+app/search/search.json
