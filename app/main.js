@@ -113,6 +113,7 @@ app.on('ready', function() {
 // Launch the requested page or the index
 function launchRequestedPage(cmdArg, sections) {
   if (cmdArg === "") {
+      console.log("No Arguments to Launch")
       mainWindow.loadURL('http://localhost:9527/index.html');
   } else {
       for (i = 0; i < sections.length; i++) {
@@ -133,6 +134,8 @@ function checkForArg (args) {
           return args[i + 1];
       }
   }
+  // No section for the argument found, launch the index by default
+    return "";
 }
 
 function buildSearchIndex() {
