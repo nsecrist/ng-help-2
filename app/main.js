@@ -8,7 +8,6 @@ const BrowserWindow = electron.BrowserWindow
 const app = electron.app
 const baseURL = "http://localhost:9527/"
 const elasticlunr = require('./bower_components/elasticlunr/release/elasticlunr.min.js');
-const electronLocalShortcut = require('electron-localshortcut');
 
 // Playing around with some elastic search stuff in angular.
 // For this app, the JSON docs to search will be packaged, so we can add them
