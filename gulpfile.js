@@ -287,7 +287,9 @@ gulp.task('copy-bower-components', ['clean-bower-components'],  function() {
   projectDir.copy(paths.bower_components + '/bootstrap/', destDir.path('./bower_components/bootstrap/'));
   projectDir.copy(paths.bower_components + '/jquery/', destDir.path('./bower_components/jquery/'));
   projectDir.copy(paths.bower_components + '/angular-route/', destDir.path('./bower_components/angular-route/'));
+  projectDir.copy(paths.bower_components + '/angular-animate/', destDir.path('./bower_components/angular-animate/'));
   projectDir.copy(paths.bower_components + '/elasticlunr/', destDir.path('./bower_components/elasticlunr/'));
+  projectDir.copy(paths.bower_components + '/angular-bootstrap/', destDir.path('./bower_components/angular-bootstrap/'));
 });
 
 gulp.task('electron-start', ['electron-asar'], shell.task([

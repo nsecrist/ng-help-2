@@ -1,11 +1,10 @@
 const path = require('path')
 const http = require('http')
 const fs = require('fs')
-const electron = require('electron')
+const {app} = require('electron')
 //const autoUpdater = require('./auto-updater')
 // const app = require('app');
-const BrowserWindow = electron.BrowserWindow
-const app = electron.app
+const BrowserWindow = require('electron').BrowserWindow
 const baseURL = "http://localhost:9527/"
 const elasticlunr = require('./bower_components/elasticlunr/release/elasticlunr.min.js');
 const electronLocalShortcut = require('electron-localshortcut');
@@ -99,6 +98,11 @@ app.on('ready', function() {
     launchRequestedPage(cmdArg, sections);
 
     mainWindow.openDevTools();
+
+    electronLocalShortcut.register(mainWindow, 'Ctrl+F', () => {
+      console.log('You pressed ctrl & F');
+      //search.openSearchWindow();
+    });
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
@@ -225,6 +229,11 @@ function requestHandler(req, res) {
         } else if (req.method === 'GET') {
             console.log("We got a GET! Since this is a find, it should have been a POST, who screwed up?");
         }
+    } else if (result = startsWith(req.url, ['/pagesearch']).found) {
+      console.log("This is a search within page request");
+      var searchTerm = getParameterByName("v", req.url);
+      console.log("Search Term: " + searchTerm);
+
     } else {
         fullPath = path.join(root, file).replace(/\//g, "/");
     }

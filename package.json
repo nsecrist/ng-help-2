@@ -64,6 +64,7 @@
   },
   "dependencies": {
     "elasticlunr": "^0.9.5",
+    "electron-in-page-search": "^1.2.3",
     "electron-localshortcut": "^1.0.0"
   }
 }

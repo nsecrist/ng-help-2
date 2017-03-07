@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="./app.css">
 </head>
 <body>
-  <nav class="navbar navbar-inverse navbar-fixed-top">
+  <nav class="navbar navbar-inverse navbar-static-top">
     <div class="container-fluid">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -26,22 +26,23 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/index.html">ng-help</a>
+        <a class="navbar-brand" href="/index.html">CDAS Help System</a>
       </div>
       <div id="navbar" class="navbar-collapse collapse" ng-controller="SearchController">
         <form class="navbar-form navbar-right">
-          <div class="input-group">
-            <span class="input-group-addon">
-              <i class="glyphicon glyphicon-search"></i>
-            </span>
+          <div class="input-group" has-feedback has-feeback-left>
             <input type="text" class="form-control" placeholder="Search..." ng-model-options="{ debounce: 500 }" ng-model="searchTerm" ng-change="updateSearchTerm()" ng-keypress="alertSearch($event)">
+            <i class="form-control-feedback glyphicon glyphicon-search"></i>
+          </div>
+          <div ng-controller="PopoverPageSearchCtrl">
+            <button uib-popover-template="pageSearchPopover.templateUrl" type="button" class="btn btn-default" popover-placement="bottom">Popover With Template</button>
           </div>
         </form>
       </div>
     </div>
   </nav>
 
-  <div class="container-fluid">
+  <div class="container">
     <div class="row">
       <div class="col-sm-3 col-md-2 sidebar">
         <nghelp-contents></nghelp-contents>
@@ -58,7 +59,9 @@
 
   <!-- build:js scripts/vendor.js -->
   <script src="../bower_components/angular/angular.min.js"></script>
+  <script src="../bower_components/angular-animate/angular-animate.min.js"></script>
   <script src="../bower_components/angular-route/angular-route.min.js"></script>
+  <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
   <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="../bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
@@ -69,7 +72,8 @@
   <script src="./app.js"></script>
   <script src="./contents/contents.js"></script>
   <script src="./components/version/interpolate-filter.js"></script>
-  <script src="search/search.js"></script>
+  <script src="./search/search.js"></script>
+  <script src="./searchpage/searchpage.js"></script>
   <!-- endbuild -->
 </body>
 </html>

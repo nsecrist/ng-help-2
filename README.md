@@ -90,5 +90,19 @@ If you do not include the href property, the mouse cursor will not behave as use
 In order to set the text that is displayed by the search functionality within ng-Help, you must provide a <meta> tag in the head of each of your section html files. This tag must be named description and then may contain around 160 characters (recommended).
 
 ```
-<meta name="description" content="Here is some content that will displayed along with the page title as part of the search results within ng-help">
+<head>
+  <meta name="description" content="Here is some content that will displayed along with the page title as part of the search results within ng-help">
+</head>
 ```
+
+### Tooltips
+
+ng-help utilizes angular-bootstrap and as such allows you to take advantage of their styling for additional ui candy in your html sections. Please visit the [angular-bootstrap website](https://angular-ui.github.io/bootstrap/) to view other supported directives.
+
+If you want to display a basic tooltip on mouse over of a keyword 'Foo', which displays the text 'Bar' you should do the following:
+
+```
+<a href="#" tooltip-animation="false" uib-tooltip="Bar">Foo</a>
+```
+
+The above anchor tag just needs to surround any text you want to add a tooltip to.
