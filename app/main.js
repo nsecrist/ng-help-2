@@ -101,7 +101,37 @@ app.on('ready', function() {
 
     electronLocalShortcut.register(mainWindow, 'Ctrl+F', () => {
       console.log('You pressed ctrl & F');
+
+      var contents = mainWindow.webContents;
+      contents.findInPage('Alarm');
       //search.openSearchWindow();
+
+      contents.on('found-in-page', (event, result) => {
+        console.log("Number of matches: " + result.matches);
+      })
+
+    });
+
+    electronLocalShortcut.register(mainWindow, 'Ctrl+,', () => {
+      console.log('You pressed ctrl & F');
+
+      var contents = mainWindow.webContents;
+      contents.findInPage('Alarm', {
+        findNext: true,
+        forward: false
+      });
+      //search.openSearchWindow();\
+    });
+
+    electronLocalShortcut.register(mainWindow, 'Ctrl+.', () => {
+      console.log('You pressed ctrl & F');
+
+      var contents = mainWindow.webContents;
+      contents.findInPage('Alarm', {
+        findNext: true,
+        forward: true
+      });
+      //search.openSearchWindow();\
     });
 
     // Emitted when the window is closed.
@@ -214,7 +244,7 @@ function requestHandler(req, res) {
         console.log("This is a results request, handle me.");
         file = '/search/results.html';
         fullPath = path.join(root, file).replace(/\//g, "/");
-    } else if (result = startsWith(req.url, ['/find/']).found) {
+    } else if (startsWith(req.url, ['/find/']).found) {
         console.log("This is a search request, handle me.");
         console.log("Request Type:" + req.method);
 
@@ -277,6 +307,7 @@ function retreiveResultDocs(results) {
 function startsWith(string, array) {
     console.log("Starts with entered... " + string);
     for (i = 0; i < array.length; i++)
+    console.log("Starts with " + array[i] + " ?");
         if (string.startsWith(array[i]))
             return {
                 found: true,

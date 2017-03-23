@@ -3,7 +3,8 @@ angular.module('ngHelp.searchpage', [])
   .controller('PopoverPageSearchCtrl', function ($scope, $timeout, $http) {
     $scope.pageSearchPopover = {
       content: 'Search Within Page',
-      templateUrl: './searchpage/searchPageTemplate.html',
+      // templateUrl: './searchpage/searchPageTemplate.html',
+      templateUrl: './searchpage/search-window.html',
       searchTerm: ''
     };
 
