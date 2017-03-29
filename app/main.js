@@ -60,6 +60,8 @@ app.on('window-all-closed', function() {
     }
 });
 
+var pageSearchTerm = "";
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', function() {
@@ -103,7 +105,7 @@ app.on('ready', function() {
       console.log('You pressed ctrl & F');
 
       var contents = mainWindow.webContents;
-      contents.findInPage('Alarm');
+      contents.findInPage(pageSearchTerm);
       //search.openSearchWindow();
 
       contents.on('found-in-page', (event, result) => {
@@ -113,10 +115,10 @@ app.on('ready', function() {
     });
 
     electronLocalShortcut.register(mainWindow, 'Ctrl+,', () => {
-      console.log('You pressed ctrl & F');
+      console.log('You pressed ctrl & <');
 
       var contents = mainWindow.webContents;
-      contents.findInPage('Alarm', {
+      contents.findInPage(pageSearchTerm, {
         findNext: true,
         forward: false
       });
@@ -124,10 +126,10 @@ app.on('ready', function() {
     });
 
     electronLocalShortcut.register(mainWindow, 'Ctrl+.', () => {
-      console.log('You pressed ctrl & F');
+      console.log('You pressed ctrl & >');
 
       var contents = mainWindow.webContents;
-      contents.findInPage('Alarm', {
+      contents.findInPage(pageSearchTerm, {
         findNext: true,
         forward: true
       });
@@ -264,6 +266,30 @@ function requestHandler(req, res) {
       var searchTerm = getParameterByName("v", req.url);
       console.log("Search Term: " + searchTerm);
 
+      pageSearchTerm = searchTerm;
+
+      var contents = mainWindow.webContents;
+      contents.findInPage(pageSearchTerm);
+
+      return;
+    } else if (result = startsWith(req.url, ['/forward']).found) {
+      var contents = mainWindow.webContents;
+      contents.findInPage(pageSearchTerm, {
+        findNext: true,
+        forward: true
+      });
+      return;
+    } else if (result = startsWith(req.url, ['/backward']).found) {
+      var contents = mainWindow.webContents;
+      contents.findInPage(pageSearchTerm, {
+        findNext: true,
+        forward: false
+      });
+      return;
+    } else if (result = startsWith(req.url, ['/cancel']).found) {
+      var contents = mainWindow.webContents;
+      contents.stopFindInPage('clearSelection');
+      return;
     } else {
         fullPath = path.join(root, file).replace(/\//g, "/");
     }
@@ -306,17 +332,21 @@ function retreiveResultDocs(results) {
 // Checks to see if the URL passed starts with any of the items in provided array
 function startsWith(string, array) {
     console.log("Starts with entered... " + string);
-    for (i = 0; i < array.length; i++)
+    for (i = 0; i < array.length; i++) {
     console.log("Starts with " + array[i] + " ?");
-        if (string.startsWith(array[i]))
+        if (string.startsWith(array[i])) {
+            console.log("Found a match!");
             return {
                 found: true,
                 index: i
             }
-    return {
-        found: false,
-        index: i
-    }
+        } else {
+          return {
+              found: false,
+              index: i
+          }
+        }
+      }
 };
 
 function getFile(filePath, res, page404) {

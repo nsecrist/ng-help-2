@@ -8,21 +8,48 @@ angular.module('ngHelp.searchpage', [])
       searchTerm: ''
     };
 
-    $scope.search = function() {
+    $scope.search = function(type) {
       return $timeout(function () {
         try {
-          return $http.post('/pagesearch?v=' + $scope.pageSearchPopover.searchTerm).then(function(response) {
-            console.log("Response: " + response);
-            return response.data;
-          });
+          switch(type) {
+            case 1: // Search Forward
+              return $http.post('/forward').then(function(response) {
+                console.log("Response: " + response);
+                return response.data;
+              });
+            case 2: // Search Backward
+              return $http.post('/backward').then(function(response) {
+                console.log("Response: " + response);
+                return response.data;
+              });
+              case 3: // Cancel Search
+                $('#PageSearch').popover('hide');
+
+                return $http.post('/cancel').then(function(response) {
+                  console.log("Response: " + response);
+                  return response.data;
+                });
+            default:
+              return $http.post('/pagesearch?v=' + $scope.pageSearchPopover.searchTerm).then(function(response) {
+                console.log("Response: " + response);
+                return response.data;
+              });
+          }
         } catch(err) {
           return response.data;
         }
       }, 30);
     };
 
-    $scope.inPageSearch = function() {
-      console.log("Searching for: '" + $scope.pageSearchPopover.searchTerm + "' within the page!");
-      $scope.search();
+    $scope.inPageSearch = function(type) {
+          console.log("Searching for: '" + $scope.pageSearchPopover.searchTerm + "' within the page!");
+          $scope.search(type);
+    };
+
+    $scope.alertSearch = function($event) {
+      if ($event.which === 13) {
+        console.log("Enter key pressed.")
+        $scope.inPageSearch(0);
+      }
     };
   });

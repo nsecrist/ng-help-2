@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <body>
     <div class="input-group">
-        <input class="form-control" type="search" label="Search for..." autocomplete="off" ng-model="pageSearchPopover.searchTerm" autofocus></input>
+        <input class="form-control" type="search" label="Search for..." autocomplete="off" ng-model="pageSearchPopover.searchTerm" ng-keypress="alertSearch($event)" autofocus></input>
         <div class="btn-toolbar" role="toolbar" aria-label="...">
             <div class="btn-group" role="group" aria-label="...">
                 <span class="input-group-btn">
-                  <button class="btn btn-default" type="button" ng-click="inPageSearch()">
+                  <button class="btn btn-default" type="button" ng-click="inPageSearch(0)">
                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                   </button>
                 </span>
                 <span class="input-group-btn">
-                  <button class="btn btn-default" type="button">
+                  <button class="btn btn-default" type="button" ng-click="inPageSearch(2)">
                     <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
                   </button>
                 </span>
                 <span class="input-group-btn">
-                  <button class="btn btn-default" type="button">
+                  <button class="btn btn-default" type="button" ng-click="inPageSearch(1)">
                     <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                   </button>
                 </span>
                 <span class="input-group-btn">
-                  <button class="btn btn-default" type="button">
+                  <button class="btn btn-default" type="button" ng-click="inPageSearch(3)">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                   </button>
                 </span>
