@@ -4,12 +4,12 @@
     "title": "Alarm Checking"
   },
   {
-    "url": "p/Alarm Display.html",
-    "title": "Alarm Display"
-  },
-  {
     "url": "p/Alarm Editor.html",
     "title": "Alarm Editor"
+  },
+  {
+    "url": "p/Alarms Display.html",
+    "title": "Alarms Display"
   },
   {
     "url": "p/Archive Files.html",
