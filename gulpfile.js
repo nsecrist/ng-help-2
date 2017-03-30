@@ -291,6 +291,7 @@ gulp.task('copy-bower-components', ['clean-bower-components'],  function() {
   projectDir.copy(paths.bower_components + '/angular-animate/', destDir.path('./bower_components/angular-animate/'));
   projectDir.copy(paths.npm_components + '/elasticlunr/', destDir.path('./bower_components/elasticlunr/'));
   projectDir.copy(paths.bower_components + '/angular-bootstrap/', destDir.path('./bower_components/angular-bootstrap/'));
+  projectDir.copy(paths.npm_components + '/electron-localshortcut/', destDir.path('./bower_components/electron-localshortcut/'));
 });
 
 gulp.task('electron-start', ['electron-asar'], shell.task([
