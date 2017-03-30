@@ -10,30 +10,32 @@ For more information on AngularJS please check out http://angularjs.org/
 
 ## Getting Started
 
-In order to use this application, you must create two folders inside app
+1. Run ```npm install``` to install some necessary dependencies.
+2. Run ```bower install``` to install remaining necessary dependencies.
+3. In order to use this application, you must create two folders inside app
 
-```
-app\
-|-- Assets\
-|-- sections\
-```
-__Assets\__ should contain all assets needed by your section html pages. Ensure that you link to these files relatively.
+    ```
+    app\
+    |-- Assets\
+    |-- sections\
+    ```
+    __Assets\__ should contain all assets needed by your section html pages. Ensure that you link to these files relatively.
 
-__sections\__ should contain all of your html partials that you want links to in the section side bar. You should name these files what you want the title of the link in the section bar to be. __Only HTML files belong here!__
+    __sections\__ should contain all of your html partials that you want links to in the section side bar. You should name these files what you want the title of the link in the section bar to be. __Only HTML files belong here!__
 
-Once you have the above folder structure, run the following to have your __contents.json__ produced for you.
+4. Once you have the above folder structure, run the following to have your __contents.json__ produced for you.
 
-```
-gulp produce-contents-json
-```
+  ```
+  gulp produce-contents-json
+  ```
 
-To hit the ground running run the following command from the root directory of this project.
+5. To hit the ground running run the following command from the root directory of this project.
 
-```
-npm start
-```
+  ```
+  npm start
+  ```
 
-This command will install all the required dependencies for Node.js and obtain the bower components used before launching the electron application.
+  This command will install all the required dependencies for Node.js and obtain the bower components used before launching the electron application.
 
 ## Build a Distributable Asar File
 
