@@ -270,7 +270,7 @@ function requestHandler(req, res) {
 
       var contents = mainWindow.webContents;
       contents.findInPage(pageSearchTerm);
-
+      res.end();
       return;
     } else if (result = startsWith(req.url, ['/forward']).found) {
       var contents = mainWindow.webContents;
@@ -278,6 +278,7 @@ function requestHandler(req, res) {
         findNext: true,
         forward: true
       });
+      res.end();
       return;
     } else if (result = startsWith(req.url, ['/backward']).found) {
       var contents = mainWindow.webContents;
@@ -285,10 +286,12 @@ function requestHandler(req, res) {
         findNext: true,
         forward: false
       });
+      res.end();
       return;
     } else if (result = startsWith(req.url, ['/cancel']).found) {
       var contents = mainWindow.webContents;
       contents.stopFindInPage('clearSelection');
+      res.end();
       return;
     } else {
         fullPath = path.join(root, file).replace(/\//g, "/");

@@ -5,7 +5,16 @@ angular.module('ngHelp.searchpage', [])
       content: 'Search Within Page',
       // templateUrl: './searchpage/searchPageTemplate.html',
       templateUrl: './searchpage/search-window.html',
-      searchTerm: ''
+      searchTerm: '',
+      isOpen: false,
+
+      open: function open() {
+        $scope.pageSearchPopover.isOpen = true;
+      },
+
+      close: function close() {
+        $scope.pageSearchPopover.isOpen = false;
+      }
     };
 
     $scope.search = function(type) {
@@ -13,23 +22,26 @@ angular.module('ngHelp.searchpage', [])
         try {
           switch(type) {
             case 1: // Search Forward
+              console.log("Highlighting next instacnce of: " + $scope.pageSearchPopover.searchTerm);
               return $http.post('/forward').then(function(response) {
                 console.log("Response: " + response);
                 return response.data;
               });
             case 2: // Search Backward
+              console.log("Highlighting previous instance of: " + $scope.pageSearchPopover.searchTerm);
               return $http.post('/backward').then(function(response) {
                 console.log("Response: " + response);
                 return response.data;
               });
               case 3: // Cancel Search
-                $('#PageSearch').popover('hide');
-
+                console.log("Canceling search!");
+                $scope.pageSearchPopover.close();
                 return $http.post('/cancel').then(function(response) {
                   console.log("Response: " + response);
                   return response.data;
                 });
             default:
+              console.log("Searching for: '" + $scope.pageSearchPopover.searchTerm + "' within the page!");
               return $http.post('/pagesearch?v=' + $scope.pageSearchPopover.searchTerm).then(function(response) {
                 console.log("Response: " + response);
                 return response.data;
@@ -42,7 +54,6 @@ angular.module('ngHelp.searchpage', [])
     };
 
     $scope.inPageSearch = function(type) {
-          console.log("Searching for: '" + $scope.pageSearchPopover.searchTerm + "' within the page!");
           $scope.search(type);
     };
 
