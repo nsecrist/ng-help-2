@@ -101,18 +101,18 @@ app.on('ready', function() {
 
     mainWindow.openDevTools();
 
-    electronLocalShortcut.register(mainWindow, 'Ctrl+F', () => {
-      console.log('You pressed ctrl & F');
-
-      var contents = mainWindow.webContents;
-      contents.findInPage(pageSearchTerm);
-      //search.openSearchWindow();
-
-      contents.on('found-in-page', (event, result) => {
-        console.log("Number of matches: " + result.matches);
-      })
-
-    });
+    // electronLocalShortcut.register(mainWindow, 'Ctrl+F', () => {
+    //   console.log('You pressed ctrl & F');
+    //
+    //   var contents = mainWindow.webContents;
+    //   contents.findInPage(pageSearchTerm);
+    //   //search.openSearchWindow();
+    //
+    //   contents.on('found-in-page', (event, result) => {
+    //     console.log("Number of matches: " + result.matches);
+    //   })
+    //
+    // });
 
     electronLocalShortcut.register(mainWindow, 'Ctrl+,', () => {
       console.log('You pressed ctrl & <');
@@ -267,9 +267,11 @@ function requestHandler(req, res) {
       console.log("Search Term: " + searchTerm);
 
       pageSearchTerm = searchTerm;
-
-      var contents = mainWindow.webContents;
-      contents.findInPage(pageSearchTerm);
+      // If search term is not empty, search for the new term.
+      if (pageSearchTerm != '') {
+        var contents = mainWindow.webContents;
+        contents.findInPage(pageSearchTerm);
+      }
       res.end();
       return;
     } else if (result = startsWith(req.url, ['/forward']).found) {
