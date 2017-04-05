@@ -4,7 +4,9 @@
 var ngHelpApp = angular.module('ngHelp', [
     'ngRoute',
     'ngHelp.contents',
-    'ngHelp.search'
+    'ngHelp.search',
+    'ui.bootstrap',
+    'ngHelp.searchpage'
 ]).
 
 config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {

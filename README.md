@@ -10,30 +10,32 @@ For more information on AngularJS please check out http://angularjs.org/
 
 ## Getting Started
 
-In order to use this application, you must create two folders inside app
+1. Run ```npm install``` to install some necessary dependencies.
+2. Run ```bower install``` to install remaining necessary dependencies.
+3. In order to use this application, you must create two folders inside app
 
-```
-app\
-|-- Assets\
-|-- sections\
-```
-__Assets\__ should contain all assets needed by your section html pages. Ensure that you link to these files relatively.
+    ```
+    app\
+    |-- Assets\
+    |-- sections\
+    ```
+    __Assets\__ should contain all assets needed by your section html pages. Ensure that you link to these files relatively.
 
-__sections\__ should contain all of your html partials that you want links to in the section side bar. You should name these files what you want the title of the link in the section bar to be. __Only HTML files belong here!__
+    __sections\__ should contain all of your html partials that you want links to in the section side bar. You should name these files what you want the title of the link in the section bar to be. __Only HTML files belong here!__
 
-Once you have the above folder structure, run the following to have your __contents.json__ produced for you.
+4. Once you have the above folder structure, run the following to have your __contents.json__ produced for you.
 
-```
-gulp produce-contents-json
-```
+  ```
+  gulp produce-contents-json
+  ```
 
-To hit the ground running run the following command from the root directory of this project.
+5. To hit the ground running run the following command from the root directory of this project.
 
-```
-npm start
-```
+  ```
+  npm start
+  ```
 
-This command will install all the required dependencies for Node.js and obtain the bower components used before launching the electron application.
+  This command will install all the required dependencies for Node.js and obtain the bower components used before launching the electron application.
 
 ## Build a Distributable Asar File
 
@@ -90,5 +92,19 @@ If you do not include the href property, the mouse cursor will not behave as use
 In order to set the text that is displayed by the search functionality within ng-Help, you must provide a <meta> tag in the head of each of your section html files. This tag must be named description and then may contain around 160 characters (recommended).
 
 ```
-<meta name="description" content="Here is some content that will displayed along with the page title as part of the search results within ng-help">
+<head>
+  <meta name="description" content="Here is some content that will displayed along with the page title as part of the search results within ng-help">
+</head>
 ```
+
+### Tooltips
+
+ng-help utilizes angular-bootstrap and as such allows you to take advantage of their styling for additional ui candy in your html sections. Please visit the [angular-bootstrap website](https://angular-ui.github.io/bootstrap/) to view other supported directives.
+
+If you want to display a basic tooltip on mouse over of a keyword 'Foo', which displays the text 'Bar' you should do the following:
+
+```
+<a href="#" tooltip-animation="false" uib-tooltip="Bar">Foo</a>
+```
+
+The above anchor tag just needs to surround any text you want to add a tooltip to.
