@@ -99,7 +99,7 @@ app.on('ready', function() {
     // Launch the requested page or the index
     launchRequestedPage(cmdArg, sections);
 
-    mainWindow.openDevTools();
+    //mainWindow.openDevTools();
 
     // electronLocalShortcut.register(mainWindow, 'Ctrl+F', () => {
     //   console.log('You pressed ctrl & F');
